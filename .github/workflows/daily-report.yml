@@ -1,0 +1,32 @@
+name: Daily PRofiCRM Incident Report
+
+on:
+  schedule:
+    - cron: "0 6 * * 1-5" # 6:00 UTC = 9:00 Kyiv (EEST, UTC+3), only on weekdays
+  workflow_dispatch: # Allow manual triggering of the workflow
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run incident bot
+        run: python incident_bot.py
+        env:
+          JIRA_URL: ${{ secrets.JIRA_URL }}
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_PROJECT: ${{ secrets.JIRA_PROJECT }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
