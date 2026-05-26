@@ -1,4 +1,4 @@
-name: Daily PRofiCRM Incident Report
+name: Daily ProfiCRM Incident Report
 
 on:
   schedule:
@@ -30,3 +30,4 @@ jobs:
           JIRA_PROJECT: ${{ secrets.JIRA_PROJECT }}
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          JIRA_BOARD_ID: ${{ secrets.JIRA_BOARD_ID }}

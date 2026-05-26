@@ -9,13 +9,33 @@ JIRA_URL = os.environ["JIRA_URL"]
 JIRA_EMAIL = os.environ["JIRA_EMAIL"]
 JIRA_API_TOKEN = os.environ["JIRA_API_TOKEN"]
 JIRA_PROJECT = os.environ["JIRA_PROJECT"]
-JIRA_BOARD_URL = f"{JIRA_URL}/jira/software/projects/{JIRA_PROJECT}/boards"
+JIRA_BOARD_ID = os.environ["JIRA_BOARD_ID"]
+JIRA_BOARD_URL = f"{JIRA_URL}/jira/software/projects/{JIRA_PROJECT}/boards/{JIRA_BOARD_ID}"
 
 SLACK_TOKEN = os.environ["SLACK_TOKEN"]
 SLACK_CHANNEL = os.environ["SLACK_CHANNEL"]
 
 auth = HTTPBasicAuth(JIRA_EMAIL, JIRA_API_TOKEN)
 headers = {"Accept": "application/json"}
+
+
+def debug_open_issues():
+    """Print all open issues with their priority names for debugging"""
+    jql = f"project = {JIRA_PROJECT} AND statusCategory != Done"
+    resp = requests.post(
+        f"{JIRA_URL}/rest/api/3/search/jql",
+        headers={**headers, "Content-Type": "application/json"},
+        auth=auth,
+        json={"jql": jql, "maxResults": 50, "fields": ["summary", "priority", "status"]},
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    print(f"DEBUG: Total open issues: {data.get('total', 0)}")
+    for issue in data.get("issues", []):
+        key = issue["key"]
+        priority = issue["fields"].get("priority", {})
+        status = issue["fields"].get("status", {})
+        print(f"  {key} | priority: {priority.get('name')} | status: {status.get('name')}")
 
 
 def get_active_incidents():
@@ -129,6 +149,7 @@ def send_to_slack(message):
 
 
 if __name__ == "__main__":
+    debug_open_issues()
     print("Fetching Jira data...")
     active = get_active_incidents()
     print(f"Active incidents: {active}")
