@@ -10,7 +10,9 @@ JIRA_EMAIL = os.environ["JIRA_EMAIL"]
 JIRA_API_TOKEN = os.environ["JIRA_API_TOKEN"]
 JIRA_PROJECT = os.environ["JIRA_PROJECT"]
 JIRA_BOARD_ID = os.environ["JIRA_BOARD_ID"]
-JIRA_BOARD_URL = f"{JIRA_URL}/jira/software/projects/{JIRA_PROJECT}/boards/{JIRA_BOARD_ID}"
+JIRA_BOARD_URL = (
+    f"{JIRA_URL}/jira/software/projects/{JIRA_PROJECT}/boards/{JIRA_BOARD_ID}"
+)
 
 SLACK_TOKEN = os.environ["SLACK_TOKEN"]
 SLACK_CHANNEL = os.environ["SLACK_CHANNEL"]
@@ -121,7 +123,7 @@ def send_to_slack(message):
     resp = requests.post(
         "https://slack.com/api/chat.postMessage",
         headers={"Authorization": f"Bearer {SLACK_TOKEN}"},
-        json={"channel": SLACK_CHANNEL, **message},
+        json={"channel": SLACK_CHANNEL, "username": "Gojo", **message},
     )
     result = resp.json()
     if not result.get("ok"):
