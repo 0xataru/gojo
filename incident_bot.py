@@ -19,25 +19,6 @@ auth = HTTPBasicAuth(JIRA_EMAIL, JIRA_API_TOKEN)
 headers = {"Accept": "application/json"}
 
 
-def debug_open_issues():
-    """Print all open issues with their priority names for debugging"""
-    jql = f"project = {JIRA_PROJECT} AND statusCategory != Done"
-    resp = requests.post(
-        f"{JIRA_URL}/rest/api/3/search/jql",
-        headers={**headers, "Content-Type": "application/json"},
-        auth=auth,
-        json={"jql": jql, "maxResults": 50, "fields": ["summary", "priority", "status"]},
-    )
-    resp.raise_for_status()
-    data = resp.json()
-    print(f"DEBUG: Total open issues: {data.get('total', 0)}")
-    for issue in data.get("issues", []):
-        key = issue["key"]
-        priority = issue["fields"].get("priority", {})
-        status = issue["fields"].get("status", {})
-        print(f"  {key} | priority: {priority.get('name')} | status: {status.get('name')}")
-
-
 def get_active_incidents():
     """Active incidents by priority (status not Done)"""
     counts = {"High": 0, "Medium": 0, "Low": 0}
@@ -52,12 +33,12 @@ def get_active_incidents():
             f"{JIRA_URL}/rest/api/3/search/jql",
             headers={**headers, "Content-Type": "application/json"},
             auth=auth,
-            json={"jql": jql, "maxResults": 1},
+            json={"jql": jql, "maxResults": 500, "fields": ["id"]},
         )
         if not resp.ok:
             print(f"Jira error {resp.status_code}: {resp.text}")
         resp.raise_for_status()
-        counts[priority] = resp.json().get("total", 0)
+        counts[priority] = len(resp.json().get("issues", []))
 
     return counts
 
@@ -76,12 +57,12 @@ def get_resolved_yesterday():
         f"{JIRA_URL}/rest/api/3/search/jql",
         headers={**headers, "Content-Type": "application/json"},
         auth=auth,
-        json={"jql": jql, "maxResults": 1},
+        json={"jql": jql, "maxResults": 500, "fields": ["id"]},
     )
     if not resp.ok:
         print(f"Jira error {resp.status_code}: {resp.text}")
     resp.raise_for_status()
-    return resp.json().get("total", 0)
+    return len(resp.json().get("issues", []))
 
 
 def build_slack_message(active, resolved_yesterday):
@@ -149,7 +130,6 @@ def send_to_slack(message):
 
 
 if __name__ == "__main__":
-    debug_open_issues()
     print("Fetching Jira data...")
     active = get_active_incidents()
     print(f"Active incidents: {active}")
