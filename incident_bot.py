@@ -34,6 +34,8 @@ def get_active_incidents():
             auth=auth,
             json={"jql": jql, "maxResults": 0},
         )
+        if not resp.ok:
+            print(f"Jira error {resp.status_code}: {resp.text}")
         resp.raise_for_status()
         counts[priority] = resp.json().get("total", 0)
 
@@ -56,6 +58,8 @@ def get_resolved_yesterday():
         auth=auth,
         json={"jql": jql, "maxResults": 0},
     )
+    if not resp.ok:
+        print(f"Jira error {resp.status_code}: {resp.text}")
     resp.raise_for_status()
     return resp.json().get("total", 0)
 
