@@ -32,7 +32,7 @@ def get_active_incidents():
             f"{JIRA_URL}/rest/api/3/search/jql",
             headers={**headers, "Content-Type": "application/json"},
             auth=auth,
-            json={"jql": jql, "maxResults": 0},
+            json={"jql": jql, "maxResults": 1},
         )
         if not resp.ok:
             print(f"Jira error {resp.status_code}: {resp.text}")
@@ -56,7 +56,7 @@ def get_resolved_yesterday():
         f"{JIRA_URL}/rest/api/3/search/jql",
         headers={**headers, "Content-Type": "application/json"},
         auth=auth,
-        json={"jql": jql, "maxResults": 0},
+        json={"jql": jql, "maxResults": 1},
     )
     if not resp.ok:
         print(f"Jira error {resp.status_code}: {resp.text}")
