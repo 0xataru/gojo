@@ -28,11 +28,11 @@ def get_active_incidents():
             f'AND priority = "{priority}" '
             f"AND statusCategory != Done"
         )
-        resp = requests.get(
-            f"{JIRA_URL}/rest/api/3/search",
-            headers=headers,
+        resp = requests.post(
+            f"{JIRA_URL}/rest/api/3/search/jql",
+            headers={**headers, "Content-Type": "application/json"},
             auth=auth,
-            params={"jql": jql, "maxResults": 0},
+            json={"jql": jql, "maxResults": 0},
         )
         resp.raise_for_status()
         counts[priority] = resp.json().get("total", 0)
@@ -50,11 +50,11 @@ def get_resolved_yesterday():
         f'AND updated >= "{yesterday}" '
         f'AND updated < "{today}"'
     )
-    resp = requests.get(
-        f"{JIRA_URL}/rest/api/3/search",
-        headers=headers,
+    resp = requests.post(
+        f"{JIRA_URL}/rest/api/3/search/jql",
+        headers={**headers, "Content-Type": "application/json"},
         auth=auth,
-        params={"jql": jql, "maxResults": 0},
+        json={"jql": jql, "maxResults": 0},
     )
     resp.raise_for_status()
     return resp.json().get("total", 0)
