@@ -1,9 +1,7 @@
 name: Daily ProfiCRM Incident Report
 
 on:
-  schedule:
-    - cron: "0 6 * * 1-5" # 6:00 UTC = 9:00 Kyiv (EEST, UTC+3), only on weekdays
-  workflow_dispatch: # Allow manual triggering of the workflow
+  workflow_dispatch: # Triggered by cron-job.org daily at 9:00 Kyiv (EEST)
 
 jobs:
   send-report:
