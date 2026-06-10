@@ -21,12 +21,12 @@
   <a href="https://www.atlassian.com/software/jira">
     <img src="https://img.shields.io/badge/Jira-integration-0052CC?logo=jira&logoColor=white" alt="Jira" />
   </a>
-  <img src="https://img.shields.io/badge/schedule-weekdays%2010%3A00%20Kyiv-555" alt="Schedule" />
+  <img src="https://img.shields.io/badge/schedule-weekdays%2007%3A00%20UTC-555" alt="Schedule" />
 </p>
 
 ---
 
-A GitHub Actions bot that sends a daily Jira incident summary to Slack every weekday at 10:00 AM Kyiv time.
+A GitHub Actions bot that sends a daily Jira incident summary to Slack every weekday at 07:00 UTC.
 
 ## What it reports
 
@@ -56,4 +56,4 @@ Go to **Actions → Daily Incident Report → Run workflow** to test before the 
 
 ## Schedule
 
-Runs automatically Monday–Friday at 07:00 UTC (10:00 Kyiv, EEST) via `cron-job.org`.
+Runs automatically Monday–Friday at 07:00 UTC via `cron-job.org`.
