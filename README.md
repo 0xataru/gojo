@@ -1,4 +1,4 @@
-# Incident Bot
+# Gojo (slack incident bot)
 
 A GitHub Actions bot that sends a daily Jira incident summary to Slack every weekday at 9:00 AM Kyiv time.
 
@@ -30,5 +30,4 @@ Go to **Actions → Daily PRofiCRM Incident Report → Run workflow** to test be
 
 ## Schedule
 
-Runs automatically Monday–Friday at 07:00 UTC (10:00 Kyiv, EEST).
-
+Runs automatically Monday–Friday at 07:00 UTC (10:00 Kyiv, EEST) via `cron-job.org`.
