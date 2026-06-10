@@ -52,7 +52,7 @@ Go to **Settings → Secrets and variables → Actions** and add:
 
 ### 2. Run manually (optional)
 
-Go to **Actions → Daily PRofiCRM Incident Report → Run workflow** to test before the scheduled run.
+Go to **Actions → Daily Incident Report → Run workflow** to test before the scheduled run.
 
 ## Schedule
 
