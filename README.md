@@ -1,4 +1,30 @@
-# Gojo (slack incident bot)
+<p align="center">
+  <img src="gojo.png" alt="Gojo" width="180" />
+</p>
+
+<h1 align="center">Gojo</h1>
+
+<p align="center">
+  <strong>Slack incident bot</strong> — daily Jira summary to your channel
+</p>
+
+<p align="center">
+  <a href="https://github.com/0xataru/incident-bot/actions/workflows/daily-report.yml">
+    <img src="https://github.com/0xataru/incident-bot/actions/workflows/daily-report.yml/badge.svg" alt="Daily Incident Report" />
+  </a>
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white" alt="Python 3.11" />
+  </a>
+  <a href="https://slack.com/">
+    <img src="https://img.shields.io/badge/Slack-integration-4A154B?logo=slack&logoColor=white" alt="Slack" />
+  </a>
+  <a href="https://www.atlassian.com/software/jira">
+    <img src="https://img.shields.io/badge/Jira-integration-0052CC?logo=jira&logoColor=white" alt="Jira" />
+  </a>
+  <img src="https://img.shields.io/badge/schedule-weekdays%209%3A00%20Kyiv-555" alt="Schedule" />
+</p>
+
+---
 
 A GitHub Actions bot that sends a daily Jira incident summary to Slack every weekday at 9:00 AM Kyiv time.
 
