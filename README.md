@@ -21,12 +21,12 @@
   <a href="https://www.atlassian.com/software/jira">
     <img src="https://img.shields.io/badge/Jira-integration-0052CC?logo=jira&logoColor=white" alt="Jira" />
   </a>
-  <img src="https://img.shields.io/badge/schedule-weekdays%209%3A00%20Kyiv-555" alt="Schedule" />
+  <img src="https://img.shields.io/badge/schedule-weekdays%2010%3A00%20Kyiv-555" alt="Schedule" />
 </p>
 
 ---
 
-A GitHub Actions bot that sends a daily Jira incident summary to Slack every weekday at 9:00 AM Kyiv time.
+A GitHub Actions bot that sends a daily Jira incident summary to Slack every weekday at 10:00 AM Kyiv time.
 
 ## What it reports
 

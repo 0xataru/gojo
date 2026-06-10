@@ -1,7 +1,7 @@
 name: Daily Incident Report
 
 on:
-  workflow_dispatch: # Triggered by cron-job.org daily at 9:00 Kyiv (EEST)
+  workflow_dispatch: # Triggered by cron-job.org daily at 10:00 Kyiv (EEST)
 
 jobs:
   send-report:
