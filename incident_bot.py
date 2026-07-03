@@ -20,10 +20,18 @@ SLACK_CHANNEL = os.environ["SLACK_CHANNEL"]
 auth = HTTPBasicAuth(JIRA_EMAIL, JIRA_API_TOKEN)
 headers = {"Accept": "application/json"}
 
+PRIORITIES = (
+    ("Highest", "🔺"),
+    ("High", "🔴"),
+    ("Medium", "🟠"),
+    ("Low", "🟡"),
+    ("Lowest", "🔵"),
+)
+
 
 def get_active_incidents():
     """Active incidents by priority (status not Done)"""
-    counts = {"High": 0, "Medium": 0, "Low": 0}
+    counts = {name: 0 for name, _ in PRIORITIES}
 
     for priority in counts:
         jql = (
@@ -78,6 +86,13 @@ def build_slack_message(active, resolved_yesterday):
         else "0 resolved (none)"
     )
 
+    priority_labels = "\n".join(
+        f"{emoji} *{name}*" for name, emoji in PRIORITIES
+    )
+    priority_counts = "\n".join(
+        f"Active: `{active[name]}`" for name, _ in PRIORITIES
+    )
+
     return {
         "blocks": [
             {
@@ -89,14 +104,10 @@ def build_slack_message(active, resolved_yesterday):
             },
             {
                 "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": (
-                        f"🔴 *High*   › Active: `{active['High']}`\n"
-                        f"🟠 *Medium* › Active: `{active['Medium']}`\n"
-                        f"🟡 *Low*    › Active: `{active['Low']}`"
-                    ),
-                },
+                "fields": [
+                    {"type": "mrkdwn", "text": priority_labels},
+                    {"type": "mrkdwn", "text": priority_counts},
+                ],
             },
             {"type": "divider"},
             {

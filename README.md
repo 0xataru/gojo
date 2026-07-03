@@ -30,7 +30,7 @@ A GitHub Actions bot that sends a daily Jira incident summary to Slack every wee
 
 ## What it reports
 
-- Active incidents by priority (High / Medium / Low)
+- Active incidents by priority (Highest / High / Medium / Low / Lowest)
 - Total active count
 - Number of incidents resolved yesterday
 - Link to the Jira board
