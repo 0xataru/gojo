@@ -75,6 +75,15 @@ def get_resolved_yesterday():
     return len(resp.json().get("issues", []))
 
 
+def _format_priority_status(active):
+    name_width = max(len(name) for name, _ in PRIORITIES)
+    lines = [
+        f"{emoji} {name:<{name_width}}   Active: {active[name]}"
+        for name, emoji in PRIORITIES
+    ]
+    return "```\n" + "\n".join(lines) + "\n```"
+
+
 def build_slack_message(active, resolved_yesterday):
     total = sum(active.values())
     today = date.today().strftime("%B %d, %Y")
@@ -84,13 +93,6 @@ def build_slack_message(active, resolved_yesterday):
         f"{resolved_yesterday} resolved"
         if resolved_yesterday > 0
         else "0 resolved (none)"
-    )
-
-    priority_labels = "\n".join(
-        f"{emoji} *{name}*" for name, emoji in PRIORITIES
-    )
-    priority_counts = "\n".join(
-        f"Active: `{active[name]}`" for name, _ in PRIORITIES
     )
 
     return {
@@ -104,10 +106,10 @@ def build_slack_message(active, resolved_yesterday):
             },
             {
                 "type": "section",
-                "fields": [
-                    {"type": "mrkdwn", "text": priority_labels},
-                    {"type": "mrkdwn", "text": priority_counts},
-                ],
+                "text": {
+                    "type": "mrkdwn",
+                    "text": _format_priority_status(active),
+                },
             },
             {"type": "divider"},
             {
