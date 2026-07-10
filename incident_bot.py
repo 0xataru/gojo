@@ -21,11 +21,9 @@ auth = HTTPBasicAuth(JIRA_EMAIL, JIRA_API_TOKEN)
 headers = {"Accept": "application/json"}
 
 PRIORITIES = (
-    ("Highest", "🆘"),
-    ("High", "🔴"),
-    ("Medium", "🟠"),
-    ("Low", "🟡"),
-    ("Lowest", "🔵"),
+    ("Highest", "🔴"),
+    ("High", "🟠"),
+    ("Medium", "🟡"),
 )
 
 
