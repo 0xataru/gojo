@@ -34,6 +34,7 @@ def get_active_incidents():
     for priority in counts:
         jql = (
             f"project = {JIRA_PROJECT} "
+            f"AND issuetype = Task "
             f'AND priority = "{priority}" '
             f"AND statusCategory != Done"
         )
@@ -57,6 +58,7 @@ def get_resolved_yesterday():
     today = date.today().strftime("%Y-%m-%d")
     jql = (
         f"project = {JIRA_PROJECT} "
+        f"AND issuetype = Task "
         f"AND statusCategory = Done "
         f'AND updated >= "{yesterday}" '
         f'AND updated < "{today}"'
