@@ -20,22 +20,23 @@ SLACK_CHANNEL = os.environ["SLACK_CHANNEL"]
 auth = HTTPBasicAuth(JIRA_EMAIL, JIRA_API_TOKEN)
 headers = {"Accept": "application/json"}
 
+# Jira priority IDs are stable; display names get renamed (e.g. "High (P1)")
 PRIORITIES = (
-    ("Highest", "🔴"),
-    ("High", "🟠"),
-    ("Medium", "🟡"),
+    ("P0", "🔴", 1),
+    ("P1", "🟠", 2),
+    ("P2", "🟡", 3),
 )
 
 
 def get_active_incidents():
     """Active incidents by priority (status not Done)"""
-    counts = {name: 0 for name, _ in PRIORITIES}
+    counts = {name: 0 for name, _, _ in PRIORITIES}
 
-    for priority in counts:
+    for name, _, priority_id in PRIORITIES:
         jql = (
             f"project = {JIRA_PROJECT} "
             f"AND issuetype = Task "
-            f'AND priority = "{priority}" '
+            f"AND priority = {priority_id} "
             f"AND statusCategory != Done"
         )
         resp = requests.post(
@@ -47,21 +48,23 @@ def get_active_incidents():
         if not resp.ok:
             print(f"Jira error {resp.status_code}: {resp.text}")
         resp.raise_for_status()
-        counts[priority] = len(resp.json().get("issues", []))
+        counts[name] = len(resp.json().get("issues", []))
 
     return counts
 
 
 def get_resolved_yesterday():
-    """Incidents resolved yesterday (status changed to Done)"""
+    """P0–P2 incidents resolved yesterday (by resolution date)"""
+    priority_ids = ", ".join(str(pid) for _, _, pid in PRIORITIES)
     yesterday = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
     today = date.today().strftime("%Y-%m-%d")
     jql = (
         f"project = {JIRA_PROJECT} "
         f"AND issuetype = Task "
+        f"AND priority in ({priority_ids}) "
         f"AND statusCategory = Done "
-        f'AND updated >= "{yesterday}" '
-        f'AND updated < "{today}"'
+        f'AND resolved >= "{yesterday}" '
+        f'AND resolved < "{today}"'
     )
     resp = requests.post(
         f"{JIRA_URL}/rest/api/3/search/jql",
@@ -75,61 +78,21 @@ def get_resolved_yesterday():
     return len(resp.json().get("issues", []))
 
 
-def _format_priority_status(active):
-    name_width = max(len(name) for name, _ in PRIORITIES)
-    lines = [
-        f"{emoji} {name:<{name_width}}   Active: {active[name]}"
-        for name, emoji in PRIORITIES
-    ]
-    return "```\n" + "\n".join(lines) + "\n```"
-
-
 def build_slack_message(active, resolved_yesterday):
     total = sum(active.values())
-    today = date.today().strftime("%B %d, %Y")
-    weekday = date.today().strftime("%A")
+    today = date.today().strftime("%A, %B %d, %Y")
 
-    resolved_text = (
-        f"{resolved_yesterday} resolved"
-        if resolved_yesterday > 0
-        else "0 resolved (none)"
-    )
-
-    return {
-        "blocks": [
-            {
-                "type": "header",
-                "text": {
-                    "type": "plain_text",
-                    "text": f"🚨 PS Incident Status — {weekday}, {today}",
-                },
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": _format_priority_status(active),
-                },
-            },
-            {"type": "divider"},
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": (
-                        f"📊 *Total Active: {total}*\n" f"📅 Yesterday: {resolved_text}"
-                    ),
-                },
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"📋 <{JIRA_BOARD_URL}|View Jira Board (PS)>",
-                },
-            },
-        ]
-    }
+    lines = [f"🚨 *PS Incident Status — {today}*", ""]
+    lines += [
+        f"{emoji} *{name}* — Active: {active[name]}" for name, emoji, _ in PRIORITIES
+    ]
+    lines += [
+        "",
+        f"📊 *Total Active: {total}*",
+        f"📅 Yesterday: {resolved_yesterday} resolved",
+        f"📋 <{JIRA_BOARD_URL}|View Jira Board (PS)>",
+    ]
+    return {"text": "\n".join(lines)}
 
 
 def send_to_slack(message):
